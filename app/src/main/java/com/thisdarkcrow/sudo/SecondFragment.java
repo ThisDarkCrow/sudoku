@@ -1,6 +1,7 @@
 package com.thisdarkcrow.sudo;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +29,8 @@ public class SecondFragment extends Fragment {
     ) {
 
         binding = FragmentSecondBinding.inflate(inflater, container, false);
-        targetX=0;
-        targetY=0;
+        targetX=-1;
+        targetY=-1;
         sudoku=new TextView[9][9];
 
         sudoku[0][0]=binding.textView00;
@@ -140,11 +141,12 @@ public class SecondFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonSecond.setOnClickListener(v ->
+        /*binding.buttonSecond.setOnClickListener(v ->
                 NavHostFragment.findNavController(SecondFragment.this)
                         .navigate(R.id.action_SecondFragment_to_FirstFragment)
-        );
+        );*/
 
+        //Numeric screen button array listeners
         for(int i=0;i<numPad.length;++i){
             int finali=i;
             numPad[i].setOnClickListener(
@@ -153,15 +155,14 @@ public class SecondFragment extends Fragment {
                         public void onClick(View view) {
                             try {
                                 sudoku[targetX][targetY].setText(""+(finali+1));
-                            } catch (NullPointerException e){
-                                sudoku[0][0].setText(""+(finali+1));
-                            }
+                            }catch (NullPointerException | ArrayIndexOutOfBoundsException e){}
 
                         }
                     }
             );
         }
 
+        //Cell selected array screen listeners
         for(int i=0;i<sudoku.length;++i){
             int finali=i;
             for(int j=0;j<sudoku.length;++j){
@@ -170,13 +171,13 @@ public class SecondFragment extends Fragment {
                         new View.OnClickListener(){
                             @Override
                             public void onClick(View view) {
-                                for(int x=0;x< sudoku.length;++x){
-                                    for(int y=0;y< sudoku.length;++y){
-                                        sudoku[x][y].setBackgroundResource(R.drawable.marco_black_foreground);
-                                    }
-                                }
+                                try{
+                                    sudoku[targetX][targetY].setBackgroundResource(R.drawable.marco_black_foreground);
+                                } catch (ArrayIndexOutOfBoundsException e){}
+
                                 targetX=finali;
                                 targetY= finalj;
+
                                 sudoku[finali][finalj].setBackgroundResource(R.drawable.marco_red_foreground);
                             }
                         }
